@@ -1,9 +1,9 @@
 import { model, Schema } from "mongoose";
-import { IUser } from "../interfaces/user.interface";
+import { IUser, UserStaticMethod } from "../interfaces/user.interface";
 import validator from "validator";
-import bcrypt from 'bcryptjs';
+import bcrypt from "bcryptjs";
 
-const userSchema = new Schema<IUser>(
+const userSchema = new Schema<IUser, UserStaticMethod>(
   {
     name: {
       type: String,
@@ -28,8 +28,29 @@ const userSchema = new Schema<IUser>(
   { versionKey: false, timestamps: true }
 );
 
-userSchema.pre("save", async function(next) {
+userSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, 10);
-})
+});
 
-export const Users = model("Users", userSchema);
+userSchema.static("isExist", async function (email, password) {
+  const user = await Users.findOne({ email });
+  if (!user) {
+    throw {
+      success: false,
+      name: "ValidationError",
+      message: "Check email or password",
+    };
+  }
+
+  const what = await bcrypt.compare(password, user.password);
+  if (!what) {
+    throw {
+      name: "ValidationError",
+      message: "Password is wrong!",
+      success: false,
+    };
+  }
+  return user;
+});
+
+export const Users = model<IUser, UserStaticMethod>("Users", userSchema);

@@ -1,8 +1,12 @@
 import express, { NextFunction, Request, Response } from "express";
 import { authRouter } from "./app/auth/auth.route";
+import cors from "cors";
+import cookieParser from "cookie-parser";
 
 const app = express();
 app.use(express.json());
+app.use(cors());
+app.use(cookieParser());
 
 app.use("/auth", authRouter);
 
@@ -15,18 +19,18 @@ app.use((req: Request, res: Response) => {
 });
 
 app.use((error: any, req: Request, res: Response, next: NextFunction) => {
-    if(error) {
-        res.status(400).json({
-          message:
-            error.name === "ValidationError"
-              ? "Validation failed"
-              : error.name === "castError"
-              ? "Cannot get by this id"
-              : "Unknown Error Occured",
-          success: false,
-          error,
-        });
-    }
-})
+  if (error) {
+    res.status(400).json({
+      message:
+        error.name === "ValidationError"
+          ? "Validation failed"
+          : error.name === "castError"
+          ? "Cannot get by this id"
+          : "Unknown Error Occured",
+      success: false,
+      error,
+    });
+  }
+});
 
 export default app;

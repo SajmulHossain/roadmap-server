@@ -15,11 +15,12 @@ authRouter.post("/sign-up", async(req: Request, res: Response) => {
 })
 
 authRouter.get("/login", async(req: Request, res: Response) => {
-    console.log(req.body);
+    const { body } = req;
+    const user = await Users.isExist(body.email, body.password);
 
     res.status(200).json({
         success: true,
         message: "Login successful",
-        data: ''
+        data: user
     })
 })
