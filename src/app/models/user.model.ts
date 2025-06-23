@@ -24,6 +24,11 @@ const userSchema = new Schema<IUser, UserStaticMethod>(
       required: [true, "Password not given"],
       minlength: [6, "Password must be atleast 6 characters"],
     },
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
+    },
   },
   { versionKey: false, timestamps: true }
 );
