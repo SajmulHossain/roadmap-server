@@ -1,6 +1,7 @@
 import { model, Schema } from "mongoose";
 import { IUser } from "../interfaces/user.interface";
 import validator from "validator";
+import bcrypt from 'bcryptjs';
 
 const userSchema = new Schema<IUser>(
   {
@@ -26,5 +27,9 @@ const userSchema = new Schema<IUser>(
   },
   { versionKey: false, timestamps: true }
 );
+
+userSchema.pre("save", async function(next) {
+  this.password = await bcrypt.hash(this.password, 10);
+})
 
 export const Users = model("Users", userSchema);
