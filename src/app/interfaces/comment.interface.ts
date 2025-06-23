@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 
 export interface IComment {
-  content: string;
+  text: string;
   author: Types.ObjectId;
   roadmap: Types.ObjectId;
   parentComment: Types.ObjectId;
