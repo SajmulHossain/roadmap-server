@@ -8,11 +8,15 @@ import { roadmapRouter } from "./app/controllers/roadmaps.controller";
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:5173"],
+  })
+);
 app.use(cookieParser());
 
 app.use("/api/auth", authRouter);
-app.use("/api/roadmaps", roadmapRouter)
+app.use("/api/roadmaps", roadmapRouter);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Roadmap server is running!");

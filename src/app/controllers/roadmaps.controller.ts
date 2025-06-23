@@ -4,7 +4,7 @@ import { verifyToken } from "../middleware/verifyToken";
 
 export const roadmapRouter = express.Router();
 
-roadmapRouter.get("", async (req: Request, res: Response) => {
+roadmapRouter.get("", verifyToken, async (req: Request, res: Response) => {
   const data = await Roadmaps.find();
 
   res.json({

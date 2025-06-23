@@ -23,9 +23,10 @@ authRouter.post("/sign-up", async (req: Request, res: Response) => {
     });
 });
 
-authRouter.get("/login", async (req: Request, res: Response) => {
+authRouter.post("/login", async (req: Request, res: Response) => {
   const { body } = req;
   const user = await Users.isExist(body.email, body.password);
+  console.log('login hitted');
   const token = addCookies(body.email);
 
   res

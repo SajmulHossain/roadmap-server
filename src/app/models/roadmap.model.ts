@@ -37,6 +37,9 @@ const roadmapSchema = new Schema<IRoadmap>({
     default: 'planned'
   },
   upvotes: [voterSchema],
+}, {
+  versionKey: false,
+  timestamps: true
 });
 
 export const Roadmaps = model("Roadmaps", roadmapSchema);
