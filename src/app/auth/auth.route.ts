@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import { Users } from "../models/user.model";
-import { addCookies } from "./jwt.config";
+import { addCookies } from "../config/jwt.config";
 
 export const authRouter = express.Router();
 
@@ -41,3 +41,14 @@ authRouter.get("/login", async (req: Request, res: Response) => {
       data: user,
     });
 });
+
+authRouter.get("/logout", (req: Request, res: Response) => {
+  res.clearCookie("token", {
+    maxAge: 0,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+  }).send({
+    success: true,
+    message: "Logout successful"
+  })
+})
