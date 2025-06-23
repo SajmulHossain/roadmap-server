@@ -1,5 +1,6 @@
 import { model, Schema } from "mongoose";
 import { IComment } from "../interfaces/comment.interface";
+import validator from "validator";
 
 const commentSchema = new Schema<IComment>(
   {
@@ -9,9 +10,10 @@ const commentSchema = new Schema<IComment>(
       maxlength: [300, "Commment must be in 300 characters or less"],
     },
     author: {
-      type: Schema.Types.ObjectId,
+      type: String,
       ref: "Users",
       required: true,
+      validate: [validator.isEmail, "Invalid email"],
     },
     roadmap: {
       type: Schema.Types.ObjectId,

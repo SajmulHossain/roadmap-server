@@ -34,6 +34,7 @@ const roadmapSchema = new Schema<IRoadmap>({
     enum: ["planned", "in_progress", "completed"],
     lowercase: true,
     required: true,
+    default: 'planned'
   },
   upvotes: [voterSchema],
 });
