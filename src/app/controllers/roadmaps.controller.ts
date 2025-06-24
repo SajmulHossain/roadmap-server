@@ -34,12 +34,21 @@ roadmapRouter.post("", verifyToken, async (req: Request, res: Response) => {
 });
 
 // * api for voting
-roadmapRouter.post("/vote/:id", async (req: Request, res: Response) => {
+roadmapRouter.post("/vote/:id", verifyToken, async (req: Request, res: Response) => {
   const { body } = req;
   const { id } = req.params;
+  if(req?.user?.email !== body.email) {
+    res.status(403).json({
+      success: false,
+      message: 'Unauthorized access',
+      data: null
+    })
+
+    return;
+  }
   const isVoted = await Roadmaps.isVoted(body.email, id);
 
-  console.log(isVoted);
+  
   if (isVoted) {
     res.status(400).json({
       success: false,
