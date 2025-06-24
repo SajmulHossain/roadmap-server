@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import { handleError } from "./app/middleware/errorHandler";
 import { routeNotFound } from "./app/middleware/404.route";
 import { roadmapRouter } from "./app/controllers/roadmaps.controller";
+import { commentsRouter } from "./app/controllers/comments.controller";
 
 const app = express();
 app.use(express.json());
@@ -18,6 +19,7 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRouter);
 app.use("/api/roadmaps", roadmapRouter);
+app.use("/api/comments", commentsRouter)
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Roadmap server is running!");

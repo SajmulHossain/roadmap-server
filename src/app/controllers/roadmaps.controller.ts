@@ -60,8 +60,8 @@ roadmapRouter.post("/vote/:id", verifyToken, async (req: Request, res: Response)
   }
 
   const data = await Roadmaps.findByIdAndUpdate(id, {
-    $addToSet: { upvotes: {user: body.email} },
-  });
+    $addToSet: { upvotes: {user: body.email} }
+  }, {new: true});
 
   res.status(201).json({
     success: true,
@@ -69,3 +69,16 @@ roadmapRouter.post("/vote/:id", verifyToken, async (req: Request, res: Response)
     data
   });
 });
+
+
+// *getting single roadmap for details page
+roadmapRouter.get('/:id', async(req:  Request, res: Response) => {
+  const { id } = req.params;
+  const data = await Roadmaps.findById(id);
+
+  res.json({
+    success: true,
+    message: 'Data retrived successfully',
+    data
+  })
+})

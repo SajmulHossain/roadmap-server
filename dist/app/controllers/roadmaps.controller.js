@@ -43,3 +43,34 @@ exports.roadmapRouter.post("", verifyToken_1.verifyToken, (req, res) => __awaite
         data,
     });
 }));
+// * api for voting
+exports.roadmapRouter.post("/vote/:id", verifyToken_1.verifyToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const { body } = req;
+    const { id } = req.params;
+    if (((_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.email) !== body.email) {
+        res.status(403).json({
+            success: false,
+            message: 'Unauthorized access',
+            data: null
+        });
+        return;
+    }
+    const isVoted = yield roadmap_model_1.Roadmaps.isVoted(body.email, id);
+    if (isVoted) {
+        res.status(400).json({
+            success: false,
+            message: "Already voted this",
+            data: null,
+        });
+        return;
+    }
+    const data = yield roadmap_model_1.Roadmaps.findByIdAndUpdate(id, {
+        $addToSet: { upvotes: { user: body.email } },
+    });
+    res.status(201).json({
+        success: true,
+        message: 'Voted Successfully',
+        data
+    });
+}));

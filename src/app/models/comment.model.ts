@@ -1,6 +1,23 @@
 import { model, Schema } from "mongoose";
-import { IComment } from "../interfaces/comment.interface";
+import { IComment, IReply } from "../interfaces/comment.interface";
 import validator from "validator";
+
+const replySchema = new Schema<IReply>(
+  {
+    text: {
+      required: true,
+      type: String,
+      maxlength: [300, "You comment should within 300 characters."],
+    },
+    author: {
+      type: String,
+      ref: "Users",
+      required: true,
+      validate: [validator.isEmail, "Invalid email"],
+    },
+  },
+  { versionKey: false, _id: false, timestamps: true }
+);
 
 const commentSchema = new Schema<IComment>(
   {
@@ -25,12 +42,7 @@ const commentSchema = new Schema<IComment>(
       ref: "Comments",
       default: null,
     },
-    depth: {
-      type: Number,
-      required: true,
-      min: 0,
-      max: 2,
-    },
+    replies: [replySchema],
   },
   { versionKey: false, timestamps: true }
 );
