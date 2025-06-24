@@ -17,20 +17,20 @@ export const verifyToken = (
   const token = req?.cookies?.token;
 
   if (!token) {
-    res.status(401).send({ message: "Unauthorized access" });
+    res.status(401).send({ message: "Token not found!" });
     return;
   }
 
   jwt.verify(token, secret_token, async (err: any, decoded: any) => {
     if (err) {
-      res.status(400).send({ message: "Unauthorized access" });
+      res.status(401).send({ message: "Token invalid or expired" });
       return;
     }
 
     const user = await Users.findOne({ email: decoded.email });
 
     if (!user) {
-      res.status(400).send({ message: "Unauthorized access" });
+      res.status(403).send({ message: "Unauthorized access" });
       return;
     }
 

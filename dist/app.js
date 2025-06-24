@@ -12,7 +12,10 @@ const _404_route_1 = require("./app/middleware/404.route");
 const roadmaps_controller_1 = require("./app/controllers/roadmaps.controller");
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
-app.use((0, cors_1.default)());
+app.use((0, cors_1.default)({
+    origin: ["http://localhost:5173", "https://roadmap-sajmul.vercel.app"],
+    credentials: true,
+}));
 app.use((0, cookie_parser_1.default)());
 app.use("/api/auth", auth_route_1.authRouter);
 app.use("/api/roadmaps", roadmaps_controller_1.roadmapRouter);

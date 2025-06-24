@@ -34,5 +34,8 @@ const roadmapSchema = new mongoose_1.Schema({
         default: 'planned'
     },
     upvotes: [voterSchema],
+}, {
+    versionKey: false,
+    timestamps: true
 });
 exports.Roadmaps = (0, mongoose_1.model)("Roadmaps", roadmapSchema);

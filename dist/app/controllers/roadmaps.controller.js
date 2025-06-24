@@ -17,7 +17,7 @@ const express_1 = __importDefault(require("express"));
 const roadmap_model_1 = require("../models/roadmap.model");
 const verifyToken_1 = require("../middleware/verifyToken");
 exports.roadmapRouter = express_1.default.Router();
-exports.roadmapRouter.get("", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.roadmapRouter.get("", verifyToken_1.verifyToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const data = yield roadmap_model_1.Roadmaps.find();
     res.json({
         success: true,

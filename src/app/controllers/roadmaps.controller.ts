@@ -32,3 +32,31 @@ roadmapRouter.post("", verifyToken, async (req: Request, res: Response) => {
     data,
   });
 });
+
+// * api for voting
+roadmapRouter.post("/vote/:id", async (req: Request, res: Response) => {
+  const { body } = req;
+  const { id } = req.params;
+  const isVoted = await Roadmaps.isVoted(body.email, id);
+
+  console.log(isVoted);
+  if (isVoted) {
+    res.status(400).json({
+      success: false,
+      message: "Already voted this",
+      data: null,
+    });
+
+    return;
+  }
+
+  const data = await Roadmaps.findByIdAndUpdate(id, {
+    $addToSet: { upvotes: {user: body.email} },
+  });
+
+  res.status(201).json({
+    success: true,
+    message: 'Voted Successfully',
+    data
+  });
+});

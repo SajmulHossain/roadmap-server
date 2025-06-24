@@ -16,7 +16,17 @@ exports.authRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const user_model_1 = require("../models/user.model");
 const jwt_config_1 = require("../config/jwt.config");
+const verifyToken_1 = require("../middleware/verifyToken");
 exports.authRouter = express_1.default.Router();
+exports.authRouter.get("", verifyToken_1.verifyToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user1 = req.user;
+    const user = yield user_model_1.Users.findOne({ email: user1 === null || user1 === void 0 ? void 0 : user1.email });
+    res.json({
+        success: true,
+        message: "Valid user",
+        data: user,
+    });
+}));
 exports.authRouter.post("/sign-up", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { body } = req;
     const user = yield user_model_1.Users.create(body);
@@ -34,7 +44,7 @@ exports.authRouter.post("/sign-up", (req, res) => __awaiter(void 0, void 0, void
         data: user,
     });
 }));
-exports.authRouter.get("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.authRouter.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { body } = req;
     const user = yield user_model_1.Users.isExist(body.email, body.password);
     const token = (0, jwt_config_1.addCookies)(body.email);
@@ -52,12 +62,14 @@ exports.authRouter.get("/login", (req, res) => __awaiter(void 0, void 0, void 0,
     });
 }));
 exports.authRouter.get("/logout", (req, res) => {
-    res.clearCookie("token", {
+    res
+        .clearCookie("token", {
         maxAge: 0,
         secure: process.env.NODE_ENV === "production",
         sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
-    }).send({
+    })
+        .send({
         success: true,
-        message: "Logout successful"
+        message: "Logout successful",
     });
 });

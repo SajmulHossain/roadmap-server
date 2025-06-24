@@ -26,17 +26,17 @@ const verifyToken = (req, res, next) => {
     var _a;
     const token = (_a = req === null || req === void 0 ? void 0 : req.cookies) === null || _a === void 0 ? void 0 : _a.token;
     if (!token) {
-        res.status(401).send({ message: "Unauthorized access" });
+        res.status(404).send({ message: "Token not found!" });
         return;
     }
     jsonwebtoken_1.default.verify(token, env_config_1.secret_token, (err, decoded) => __awaiter(void 0, void 0, void 0, function* () {
         if (err) {
-            res.status(400).send({ message: "Unauthorized access" });
+            res.status(402).send({ message: "Token invalidor expired" });
             return;
         }
         const user = yield user_model_1.Users.findOne({ email: decoded.email });
         if (!user) {
-            res.status(400).send({ message: "Unauthorized access" });
+            res.status(403).send({ message: "Unauthorized access" });
             return;
         }
         req.user = {

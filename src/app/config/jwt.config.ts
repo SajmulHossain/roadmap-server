@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 
 export const addCookies = (email: string): string => {
   const token = jwt.sign({ email }, secret_token, {
-    expiresIn: "1d",
+    expiresIn: "12h",
   });
 
   return token;

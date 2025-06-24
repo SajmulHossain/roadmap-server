@@ -7,7 +7,7 @@ export const handleError = (
   next: NextFunction
 ) => {
   if (error) {
-    res.status(error.code || error.statusCode || error.status || 500).json({
+    res.status(error.code || error.statusCode || error.status || 400).json({
       name: error?.name || "Internal server error",
       message: error?.message || "Something went wrong!",
       success: false,

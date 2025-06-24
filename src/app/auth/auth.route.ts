@@ -1,8 +1,20 @@
 import express, { Request, Response } from "express";
 import { Users } from "../models/user.model";
 import { addCookies } from "../config/jwt.config";
+import { verifyToken } from "../middleware/verifyToken";
 
 export const authRouter = express.Router();
+
+authRouter.get("", verifyToken, async (req: Request, res: Response) => {
+  const user1 = req.user;
+  const user = await Users.findOne({ email: user1?.email });
+
+  res.json({
+    success: true,
+    message: "Valid user",
+    data: user,
+  });
+});
 
 authRouter.post("/sign-up", async (req: Request, res: Response) => {
   const { body } = req;
@@ -26,7 +38,6 @@ authRouter.post("/sign-up", async (req: Request, res: Response) => {
 authRouter.post("/login", async (req: Request, res: Response) => {
   const { body } = req;
   const user = await Users.isExist(body.email, body.password);
-  console.log('login hitted');
   const token = addCookies(body.email);
 
   res
@@ -44,12 +55,14 @@ authRouter.post("/login", async (req: Request, res: Response) => {
 });
 
 authRouter.get("/logout", (req: Request, res: Response) => {
-  res.clearCookie("token", {
-    maxAge: 0,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
-  }).send({
-    success: true,
-    message: "Logout successful"
-  })
-})
+  res
+    .clearCookie("token", {
+      maxAge: 0,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+    })
+    .send({
+      success: true,
+      message: "Logout successful",
+    });
+});
