@@ -10,6 +10,7 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const errorHandler_1 = require("./app/middleware/errorHandler");
 const _404_route_1 = require("./app/middleware/404.route");
 const roadmaps_controller_1 = require("./app/controllers/roadmaps.controller");
+const comments_controller_1 = require("./app/controllers/comments.controller");
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)({
@@ -19,6 +20,7 @@ app.use((0, cors_1.default)({
 app.use((0, cookie_parser_1.default)());
 app.use("/api/auth", auth_route_1.authRouter);
 app.use("/api/roadmaps", roadmaps_controller_1.roadmapRouter);
+app.use("/api/comments", comments_controller_1.commentsRouter);
 app.get("/", (req, res) => {
     res.send("Roadmap server is running!");
 });

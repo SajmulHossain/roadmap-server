@@ -7,9 +7,8 @@ export interface IReply {
 
 export interface IComment {
   text: string;
-  author: string;
+  author: Types.ObjectId;
   roadmap: Types.ObjectId;
-  parentComment: Types.ObjectId;
   replies: IReply;
 }
 

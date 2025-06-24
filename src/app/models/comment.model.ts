@@ -1,6 +1,7 @@
 import { model, Schema } from "mongoose";
 import { IComment, IReply } from "../interfaces/comment.interface";
 import validator from "validator";
+import { Users } from "./user.model";
 
 const replySchema = new Schema<IReply>(
   {
@@ -27,24 +28,34 @@ const commentSchema = new Schema<IComment>(
       maxlength: [300, "Commment must be in 300 characters or less"],
     },
     author: {
-      type: String,
+      type: Schema.Types.ObjectId,
       ref: "Users",
-      required: true,
-      validate: [validator.isEmail, "Invalid email"],
+      required: [true, "User is required"],
     },
     roadmap: {
       type: Schema.Types.ObjectId,
       ref: "Roadmaps",
       required: true,
     },
-    parentComment: {
-      type: Schema.Types.ObjectId,
-      ref: "Comments",
-      default: null,
-    },
     replies: [replySchema],
   },
   { versionKey: false, timestamps: true }
 );
+
+commentSchema.pre("save", async function (next) {
+  const user = await Users.findById(this.author);
+  
+  if(!user) {
+    throw {
+      success: false,
+      message: 'User not found',
+      data: user
+    }
+
+    return;
+  }
+
+  next();
+} )
 
 export const Comments = model("Comments", commentSchema);

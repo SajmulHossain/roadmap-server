@@ -66,11 +66,21 @@ exports.roadmapRouter.post("/vote/:id", verifyToken_1.verifyToken, (req, res) =>
         return;
     }
     const data = yield roadmap_model_1.Roadmaps.findByIdAndUpdate(id, {
-        $addToSet: { upvotes: { user: body.email } },
-    });
+        $addToSet: { upvotes: { user: body.email } }
+    }, { new: true });
     res.status(201).json({
         success: true,
         message: 'Voted Successfully',
+        data
+    });
+}));
+// *getting single roadmap for details page
+exports.roadmapRouter.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const data = yield roadmap_model_1.Roadmaps.findById(id);
+    res.json({
+        success: true,
+        message: 'Data retrived successfully',
         data
     });
 }));
