@@ -14,7 +14,11 @@ const comments_controller_1 = require("./app/controllers/comments.controller");
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use((0, cors_1.default)({
-    origin: ["http://localhost:5173", "https://roadmap-sajmul.vercel.app"],
+    origin: [
+        "http://localhost:5173",
+        "https://roadmap-sajmul.vercel.app",
+        "http://192.168.0.213:5173",
+    ],
     credentials: true,
 }));
 app.use((0, cookie_parser_1.default)());

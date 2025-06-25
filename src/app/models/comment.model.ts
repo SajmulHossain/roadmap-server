@@ -1,6 +1,5 @@
-import { model, Schema } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 import { IComment, IReply } from "../interfaces/comment.interface";
-import validator from "validator";
 import { Users } from "./user.model";
 
 const replySchema = new Schema<IReply>(
@@ -11,10 +10,9 @@ const replySchema = new Schema<IReply>(
       maxlength: [300, "You comment should within 300 characters."],
     },
     author: {
-      type: String,
+      type: Schema.Types.ObjectId,
       ref: "Users",
       required: true,
-      validate: [validator.isEmail, "Invalid email"],
     },
   },
   { versionKey: false, _id: false, timestamps: true }
@@ -42,20 +40,30 @@ const commentSchema = new Schema<IComment>(
   { versionKey: false, timestamps: true }
 );
 
-commentSchema.pre("save", async function (next) {
-  const user = await Users.findById(this.author);
-  
-  if(!user) {
+commentSchema.pre('save', async function (next) {
+  await checkUser(this.author);
+  next();
+})
+
+commentSchema.pre("findOneAndUpdate", async function(next) {
+  const updates: any = this.getUpdate();
+  await checkUser(updates.$addToSet.replies.author);
+  next();
+})
+
+const checkUser = async (id: Types.ObjectId) => {
+  const user = await Users.findById(id);
+
+  if (!user) {
     throw {
       success: false,
-      message: 'User not found',
-      data: user
-    }
+      message: "User not found",
+      data: user,
+    };
 
     return;
   }
+}
 
-  next();
-} )
 
 export const Comments = model("Comments", commentSchema);

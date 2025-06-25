@@ -1,8 +1,8 @@
 import { Types } from "mongoose";
 
 export interface IReply {
-  text: string,
-  author: string
+  text: string;
+  author: Types.ObjectId;
 }
 
 export interface IComment {
@@ -11,5 +11,3 @@ export interface IComment {
   roadmap: Types.ObjectId;
   replies: IReply;
 }
-
-

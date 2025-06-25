@@ -24,3 +24,17 @@ commentsRouter.get("/:id", async(req: Request, res: Response) => {
         data
     })
 })
+
+commentsRouter.patch("/reply/:id", async(req: Request, res: Response) => {
+  const { body } = req;
+  const {id} = req.params;
+  const data = await Comments.findByIdAndUpdate(id, {
+    $addToSet: {replies: body}
+  })
+
+  res.status(201).json({
+    success: true,
+    message: "Replied successfully",
+    data
+  })
+})
