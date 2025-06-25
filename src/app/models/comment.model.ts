@@ -40,16 +40,29 @@ const commentSchema = new Schema<IComment>(
   { versionKey: false, timestamps: true }
 );
 
-commentSchema.pre('save', async function (next) {
+commentSchema.pre("save", async function (next) {
   await checkUser(this.author);
   next();
-})
+});
 
-commentSchema.pre("findOneAndUpdate", async function(next) {
+commentSchema.pre("findOneAndUpdate", async function (next) {
   const updates: any = this.getUpdate();
   await checkUser(updates.$addToSet.replies.author);
+
+  const data = await Comments.findOne(this.getQuery());
+  const replies = data?.replies || [];
+
+  if (replies.length >= 3) {
+    throw {
+      success: false,
+      message: "Cannot reply more than three",
+      data: null,
+    };
+
+    return;
+  }
   next();
-})
+});
 
 const checkUser = async (id: Types.ObjectId) => {
   const user = await Users.findById(id);
@@ -63,7 +76,6 @@ const checkUser = async (id: Types.ObjectId) => {
 
     return;
   }
-}
-
+};
 
 export const Comments = model("Comments", commentSchema);
