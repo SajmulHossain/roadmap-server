@@ -8,13 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Comments = void 0;
 const mongoose_1 = require("mongoose");
-const validator_1 = __importDefault(require("validator"));
 const user_model_1 = require("./user.model");
 const replySchema = new mongoose_1.Schema({
     text: {
@@ -23,10 +19,9 @@ const replySchema = new mongoose_1.Schema({
         maxlength: [300, "You comment should within 300 characters."],
     },
     author: {
-        type: String,
+        type: mongoose_1.Schema.Types.ObjectId,
         ref: "Users",
         required: true,
-        validate: [validator_1.default.isEmail, "Invalid email"],
     },
 }, { versionKey: false, _id: false, timestamps: true });
 const commentSchema = new mongoose_1.Schema({
@@ -47,18 +42,28 @@ const commentSchema = new mongoose_1.Schema({
     },
     replies: [replySchema],
 }, { versionKey: false, timestamps: true });
-commentSchema.pre("save", function (next) {
+commentSchema.pre('save', function (next) {
     return __awaiter(this, void 0, void 0, function* () {
-        const user = yield user_model_1.Users.findById(this.author);
-        if (!user) {
-            throw {
-                success: false,
-                message: 'User not found',
-                data: user
-            };
-            return;
-        }
+        yield checkUser(this.author);
         next();
     });
+});
+commentSchema.pre("findOneAndUpdate", function (next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const updates = this.getUpdate();
+        yield checkUser(updates.$addToSet.replies.author);
+        next();
+    });
+});
+const checkUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield user_model_1.Users.findById(id);
+    if (!user) {
+        throw {
+            success: false,
+            message: "User not found",
+            data: user,
+        };
+        return;
+    }
 });
 exports.Comments = (0, mongoose_1.model)("Comments", commentSchema);

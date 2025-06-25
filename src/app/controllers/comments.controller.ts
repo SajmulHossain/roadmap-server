@@ -14,28 +14,37 @@ commentsRouter.post("", async (req: Request, res: Response) => {
   });
 });
 
-commentsRouter.get("/:id", async(req: Request, res: Response) => {
-    const { id } = req.params;
-    const data = await Comments.find({roadmap: id}).populate("author");
+commentsRouter.get("/:id", async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const data = await Comments.find({ roadmap: id }).populate([
+    "author",
+    "replies.author",
+  ]);
 
-    res.json({
-        success: true,
-        message: 'Data retrived successfully',
-        data
-    })
-})
+  res.json({
+    success: true,
+    message: "Data retrived successfully",
+    data,
+  });
+});
 
 // * reply post
-commentsRouter.patch("/reply/:id", async(req: Request, res: Response) => {
+commentsRouter.patch("/reply/:id", async (req: Request, res: Response) => {
   const { body } = req;
-  const {id} = req.params;
-  const data = await Comments.findByIdAndUpdate(id, {
-    $addToSet: {replies: body}
-  })
+  const { id } = req.params;
 
+  const data = await Comments.findByIdAndUpdate(
+    id,
+    {
+      $addToSet: { replies: body },
+    },
+    { new: true }
+  );
+  
+  
   res.status(201).json({
     success: true,
     message: "Replied successfully",
-    data
-  })
-})
+    data,
+  });
+});
