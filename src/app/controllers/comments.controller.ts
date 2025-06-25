@@ -25,6 +25,7 @@ commentsRouter.get("/:id", async(req: Request, res: Response) => {
     })
 })
 
+// * reply post
 commentsRouter.patch("/reply/:id", async(req: Request, res: Response) => {
   const { body } = req;
   const {id} = req.params;
