@@ -28,6 +28,18 @@ commentsRouter.get("/:id", async (req: Request, res: Response) => {
   });
 });
 
+// * deleting a comment
+commentsRouter.delete("/:id", async(req:Request, res: Response) => {
+  const { id } = req.params;
+  const data = await Comments.findByIdAndDelete(id);
+
+  res.json({
+    success: true,
+    message: 'Comment deleted successfully',
+    data
+  })
+})
+
 // * reply post
 commentsRouter.patch("/reply/:id", async (req: Request, res: Response) => {
   const { body } = req;

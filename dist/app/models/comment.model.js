@@ -42,7 +42,7 @@ const commentSchema = new mongoose_1.Schema({
     },
     replies: [replySchema],
 }, { versionKey: false, timestamps: true });
-commentSchema.pre('save', function (next) {
+commentSchema.pre("save", function (next) {
     return __awaiter(this, void 0, void 0, function* () {
         yield checkUser(this.author);
         next();
@@ -52,6 +52,16 @@ commentSchema.pre("findOneAndUpdate", function (next) {
     return __awaiter(this, void 0, void 0, function* () {
         const updates = this.getUpdate();
         yield checkUser(updates.$addToSet.replies.author);
+        const data = yield exports.Comments.findOne(this.getQuery());
+        const replies = (data === null || data === void 0 ? void 0 : data.replies) || [];
+        if (replies.length >= 3) {
+            throw {
+                success: false,
+                message: "Cannot reply more than three",
+                data: null,
+            };
+            return;
+        }
         next();
     });
 });
