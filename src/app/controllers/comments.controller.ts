@@ -29,16 +29,29 @@ commentsRouter.get("/:id", async (req: Request, res: Response) => {
 });
 
 // * deleting a comment
-commentsRouter.delete("/:id", async(req:Request, res: Response) => {
+commentsRouter.delete("/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
   const data = await Comments.findByIdAndDelete(id);
 
   res.json({
     success: true,
-    message: 'Comment deleted successfully',
-    data
-  })
-})
+    message: "Comment deleted successfully",
+    data,
+  });
+});
+
+// * edit comment
+commentsRouter.patch("/:id", async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { body } = req;
+  const data = await Comments.findByIdAndUpdate(id, {...body, isEdited: true}, {new: true});
+
+  res.status(201).json({
+    success: true,
+    message: "Comment modified",
+    data,
+  });
+});
 
 // * reply post
 commentsRouter.patch("/reply/:id", async (req: Request, res: Response) => {
@@ -49,11 +62,9 @@ commentsRouter.patch("/reply/:id", async (req: Request, res: Response) => {
     id,
     {
       $addToSet: { replies: body },
-    },
-    { new: true }
+    }
   );
-  
-  
+
   res.status(201).json({
     success: true,
     message: "Replied successfully",
